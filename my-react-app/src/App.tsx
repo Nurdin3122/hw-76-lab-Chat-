@@ -1,14 +1,10 @@
 
 import './App.css'
 
-function App() {
-
-
-  return (
+const App = () => (
     <>
-      <p>Hello, world!</p>
+        <p>Hello, world!!!</p>
     </>
-  )
-}
+);
 
 export default App
