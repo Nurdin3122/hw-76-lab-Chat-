@@ -8,7 +8,7 @@ let messages: MessageT[] = [];
 const MessageFile = {
     readMessage: async function () {
         try {
-            const fileContents = await fs.readFile(file);
+            const fileContents = await fs.readFile(file) || [];
             messages = JSON.parse(fileContents.toString());
         } catch (e) {
             messages = [];

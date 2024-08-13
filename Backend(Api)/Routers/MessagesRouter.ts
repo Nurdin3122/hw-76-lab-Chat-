@@ -1,6 +1,6 @@
 import express from "express";
 import MessageFile from "../WorkWithTheFiles/MessageFile";
-import { MessageTWithoutId } from "../WorkWithTheFiles/type";
+import {MessageT, MessageTWithoutId} from "../WorkWithTheFiles/type";
 const MessagesRouter = express.Router();
 MessagesRouter.post("/",async  (req,res) => {
     const { author, message } = req.body;
@@ -12,15 +12,28 @@ MessagesRouter.post("/",async  (req,res) => {
         message,
         time: new Date().toISOString(),
     };
-    const mess =await MessageFile.addMessage(newMessage)
-    res.status(200).send(mess);
+    const mess = await MessageFile.addMessage(newMessage) || [];
+        res.status(200).send(mess) ;
 });
 
 MessagesRouter.get("/",async  (req,res) => {
-    const messages = await MessageFile.getMessages()
-    const lastMessages = messages.slice(0, 30);
-    res.status(200).send(lastMessages);
+    const queryDate = req.query.time as string;
+    const messages = await MessageFile.getMessages();
+    let filteredMessages: MessageT[];
 
+    if (queryDate) {
+        const date = new Date(queryDate);
+        if (isNaN(date.getTime())) {
+            return res.status(400).send({ error: "Invalid date format" });
+        }
+        filteredMessages = messages.filter((message: MessageT) => new Date(message.time) > date);
+    } else {
+        filteredMessages = messages;
+    }
+
+    filteredMessages.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    const lastMessages = filteredMessages.slice(0, 30);
+    return res.status(200).send(lastMessages);
 });
 
 export default MessagesRouter;
