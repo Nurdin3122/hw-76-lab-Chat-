@@ -9,9 +9,7 @@ const MessageFile = {
     readMessage: async function () {
         try {
             const fileContents = await fs.readFile(file);
-            console.log(fileContents)
             messages = JSON.parse(fileContents.toString());
-            console.log(messages)
         } catch (e) {
             messages = [];
         }
@@ -27,6 +25,15 @@ const MessageFile = {
 
     async save () {
         return  await fs.writeFile(file, JSON.stringify(messages));
+    },
+
+    async getMessages () {
+        try {
+        const fileContents = await fs.readFile(file);
+        return messages = JSON.parse(fileContents.toString());
+        } catch (e) {
+            messages = [];
+        }
     }
 };
 
